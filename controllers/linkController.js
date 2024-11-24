@@ -21,6 +21,30 @@ const createLink = async (req, res) => {
     }
 };
 
+const updateLink = async(req, res) =>{
+    try{
+        const {title, url} = req.body;
+        const link = await Link.findByIdAndUpdate( req.params.id,
+            { title, url },
+            { new: true });
+        if (!link) {
+            return res.status(404).json({ message: 'Link not found' });
+        }
+        if (!req.body || Object.keys(req.body).length === 0) {
+            return res.status(400).json({ error: "At least one field is required to update." });
+        }
+        link.title = title || link.title;
+            link.url = url || link.url;
+
+            const updatedLink = await link.save();
+            res.json(updatedLink);
+    }
+    catch (error) {
+        console.error('Error updating data:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
 const deleteLink = async (req, res) => {
     try {
         const link = await Link.findByIdAndDelete(req.params.id);
@@ -34,4 +58,4 @@ const deleteLink = async (req, res) => {
     }
 };
 
-module.exports = { getLinks, createLink, deleteLink };
+module.exports = { getLinks, createLink, updateLink, deleteLink };

@@ -14,7 +14,7 @@ const registerUser = async (req, res) => {
         const user = new User({ username, email, password });
         await user.save();
 
-        const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '30d' });
+        const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '1d' });
 
         res.status(201).json({ user, token });
     } catch (error) {
@@ -28,7 +28,7 @@ const authUser = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (user && (await user.matchPassword(password))) {
-            const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '30d' });
+            const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '1d' });
             res.json({ user, token });
         } else {
             res.status(401).json({ message: 'Invalid email or password' });
